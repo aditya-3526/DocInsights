@@ -120,25 +120,25 @@
 ┌──────────────────────────▼──────────────────────────────────────┐
 │                       RAILWAY (Backend)                         │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │  FastAPI Application                                      │   │
-│  │  ├── api/          → REST endpoints (documents, chat,     │   │
-│  │  │                   search, compare, insights, dashboard)│   │
-│  │  ├── services/     → Business logic                       │   │
+│  │  FastAPI Application                                     │   │
+│  │  ├── api/          → REST endpoints (documents, chat,    │   │
+│  │  │                  search, compare, insights, dashboard)│   │
+│  │  ├── services/     → Business logic                      │   │
 │  │  │   ├── llm_client.py      → LLM with retry + cache     │   │
-│  │  │   ├── rag_service.py     → RAG pipeline orchestration  │   │
-│  │  │   ├── vector_store.py    → FAISS index management      │   │
-│  │  │   ├── embedding_service.py → Query embedding + cache   │   │
-│  │  │   └── document_processor.py → Text extraction          │   │
-│  │  ├── models/       → SQLAlchemy ORM + Pydantic schemas    │   │
-│  │  └── utils/        → Text processing, file validation     │   │
+│  │  │   ├── rag_service.py     → RAG pipeline orchestration │   │
+│  │  │   ├── vector_store.py    → FAISS index management     │   │
+│  │  │   ├── embedding_service.py → Query embedding + cache  │   │
+│  │  │   └── document_processor.py → Text extraction         │   │
+│  │  ├── models/       → SQLAlchemy ORM + Pydantic schemas   │   │
+│  │  └── utils/        → Text processing, file validation    │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                           │                                     │
 │  ┌────────────────┐  ┌────▼───────────┐  ┌──────────────────┐   │
-│  │   SQLite DB     │  │  FAISS Index   │  │  LLM (OpenRouter)│   │
-│  │  (documents,    │  │  (embeddings,  │  │  (GPT-3.5-turbo) │   │
-│  │   chunks,       │  │   similarity   │  │                  │   │
-│  │   insights,     │  │   search)      │  │                  │   │
-│  │   chat history) │  │                │  │                  │   │
+│  │   SQLite DB    │  │ FAISS Index    │  │ LLM (OpenRouter) │   │
+│  │  (documents,   │  │ (embeddings,   │  │ (GPT-3.5-turbo)  │   │
+│  │   chunks,      │  │  similarity    │  │                  │   │
+│  │   insights,    │  │  search)       │  │                  │   │
+│  │   chat history)│  │                │  │                  │   │
 │  └────────────────┘  └────────────────┘  └──────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```
