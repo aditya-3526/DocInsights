@@ -6,7 +6,7 @@ Thread-safe with persistence and document-level filtering.
 import os
 import json
 from pathlib import Path
-from threading import Lock
+from threading import RLock
 from typing import Optional
 
 import numpy as np
@@ -17,7 +17,7 @@ from backend.utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Thread-safe global state
-_lock = Lock()
+_lock = RLock()
 _faiss_index = None
 _id_map: dict[int, dict] = {}
 _next_id: int = 0
