@@ -32,7 +32,8 @@ class Settings(BaseSettings):
     llm_cache_ttl: int = 3600  # seconds
 
     # --- Embeddings ---
-    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_model: str = "text-embedding-3-small"
+    use_local_embeddings: bool = False
     embedding_cache_size: int = 512
 
     # --- Vector Store ---

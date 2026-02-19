@@ -24,15 +24,27 @@ _CACHE_MAX_SIZE = 512
 
 
 def get_embedding_model():
-    """Get or create the SentenceTransformer model (singleton, lazy-loaded)."""
+    """Get or create the SentenceTransformer or OpenAI model (singleton, lazy-loaded)."""
     global _embedding_model
     if _embedding_model is None:
-        from sentence_transformers import SentenceTransformer
-
         settings = get_settings()
-        logger.info("loading_embedding_model", model=settings.embedding_model)
-        _embedding_model = SentenceTransformer(settings.embedding_model)
-        logger.info("embedding_model_loaded", model=settings.embedding_model)
+        
+        if not settings.use_local_embeddings:
+            if not settings.is_llm_configured:
+                raise ValueError("OPENAI_API_KEY is missing or invalid. Please configure it to use OpenAI embeddings, or set use_local_embeddings=True.")
+            from langchain_openai import OpenAIEmbeddings
+            logger.info("loading_openai_embedding_model", model=settings.embedding_model)
+            _embedding_model = OpenAIEmbeddings(
+                api_key=settings.openai_api_key,
+                model=settings.embedding_model,
+                base_url=settings.openai_api_base
+            )
+            logger.info("openai_embedding_model_loaded", model=settings.embedding_model)
+        else:
+            from sentence_transformers import SentenceTransformer
+            logger.info("loading_local_embedding_model", model=settings.embedding_model)
+            _embedding_model = SentenceTransformer(settings.embedding_model)
+            logger.info("local_embedding_model_loaded", model=settings.embedding_model)
 
     return _embedding_model
 
@@ -51,12 +63,21 @@ def embed_texts(texts: list[str], batch_size: int = 64) -> np.ndarray:
     model = get_embedding_model()
 
     logger.info("embedding_texts", count=len(texts), batch_size=batch_size)
-    embeddings = model.encode(
-        texts,
-        batch_size=batch_size,
-        show_progress_bar=False,
-        normalize_embeddings=True,
-    )
+    
+    settings = get_settings()
+    if not settings.use_local_embeddings:
+        # OpenAIEmbeddings implementation
+        # The langchain implementation uses embed_documents
+        embeddings_list = model.embed_documents(texts)
+        embeddings = np.array(embeddings_list)
+    else:
+        # SentenceTransformer implementation
+        embeddings = model.encode(
+            texts,
+            batch_size=batch_size,
+            show_progress_bar=False,
+            normalize_embeddings=True,
+        )
 
     logger.info("texts_embedded", shape=embeddings.shape)
     return embeddings
@@ -84,10 +105,16 @@ def embed_query(query: str) -> np.ndarray:
 
     # Generate embedding
     model = get_embedding_model()
-    embedding = model.encode(
-        [query],
-        normalize_embeddings=True,
-    )
+    settings = get_settings()
+    
+    if not settings.use_local_embeddings:
+        embedding_list = model.embed_query(query)
+        embedding = np.array([embedding_list])
+    else:
+        embedding = model.encode(
+            [query],
+            normalize_embeddings=True,
+        )
 
     # Store in cache
     with _cache_lock:
@@ -100,6 +127,15 @@ def embed_query(query: str) -> np.ndarray:
 
 def get_embedding_dimension() -> int:
     """Get the dimensionality of the embedding model."""
+    settings = get_settings()
+    if not settings.use_local_embeddings:
+        # text-embedding-3-small uses 1536
+        # text-embedding-3-large uses 3072
+        # text-embedding-ada-002 uses 1536
+        if "large" in settings.embedding_model:
+            return 3072
+        return 1536
+        
     model = get_embedding_model()
     return model.get_sentence_embedding_dimension()
 

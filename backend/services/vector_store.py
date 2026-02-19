@@ -56,14 +56,26 @@ def get_or_create_index(dimension: int = 384):
         # Try to load existing index
         if os.path.exists(index_path + ".index"):
             try:
-                _faiss_index = faiss.read_index(index_path + ".index")
-                if os.path.exists(index_path + ".map.json"):
-                    with open(index_path + ".map.json", "r") as f:
-                        saved = json.load(f)
-                        _id_map = {int(k): v for k, v in saved.items()}
-                        _next_id = max(_id_map.keys(), default=-1) + 1
-                logger.info("faiss_index_loaded", total_vectors=_faiss_index.ntotal)
-                return _faiss_index
+                temp_index = faiss.read_index(index_path + ".index")
+                
+                # Check for dimension mismatch (e.g., switched from local to OpenAI models)
+                if temp_index.d != dimension:
+                    logger.warning(
+                        "faiss_index_dimension_mismatch",
+                        expected=dimension, 
+                        actual=temp_index.d,
+                        msg="Creating a fresh index"
+                    )
+                    # Fall through to create new index
+                else:
+                    _faiss_index = temp_index
+                    if os.path.exists(index_path + ".map.json"):
+                        with open(index_path + ".map.json", "r") as f:
+                            saved = json.load(f)
+                            _id_map = {int(k): v for k, v in saved.items()}
+                            _next_id = max(_id_map.keys(), default=-1) + 1
+                    logger.info("faiss_index_loaded", total_vectors=_faiss_index.ntotal)
+                    return _faiss_index
             except Exception as e:
                 logger.warning("faiss_index_load_failed", error=str(e))
 
