@@ -42,7 +42,7 @@ def extract_text_pdf(file_path: str) -> dict:
                 import io
                 
                 # Render page as image
-                mat = fitz.Matrix(2, 2)  # 2x zoom for better OCR
+                mat = fitz.Matrix(1.5, 1.5)  # 1.5x zoom (reduced from 2x for memory safety)
                 pix = page.get_pixmap(matrix=mat)
                 img = Image.open(io.BytesIO(pix.tobytes("png")))
                 

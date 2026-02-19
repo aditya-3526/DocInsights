@@ -29,9 +29,8 @@ def get_embedding_model():
     if _embedding_model is None:
         settings = get_settings()
         
-        if not settings.use_local_embeddings:
-            if not settings.is_llm_configured:
-                raise ValueError("OPENAI_API_KEY is missing or invalid. Please configure it to use OpenAI embeddings, or set use_local_embeddings=True.")
+        is_openai = not settings.use_local_embeddings and settings.is_llm_configured
+        if is_openai:
             from langchain_openai import OpenAIEmbeddings
             logger.info("loading_openai_embedding_model", model=settings.embedding_model)
             _embedding_model = OpenAIEmbeddings(
@@ -41,10 +40,15 @@ def get_embedding_model():
             )
             logger.info("openai_embedding_model_loaded", model=settings.embedding_model)
         else:
+            if not settings.use_local_embeddings:
+                logger.warning("OPENAI_API_KEY is missing. Falling back to explicit low-memory local embeddings.")
+            
             from sentence_transformers import SentenceTransformer
-            logger.info("loading_local_embedding_model", model=settings.embedding_model)
-            _embedding_model = SentenceTransformer(settings.embedding_model)
-            logger.info("local_embedding_model_loaded", model=settings.embedding_model)
+            # We use a preset small model for fallback to ensure memory safety
+            fallback_model = "all-MiniLM-L6-v2"
+            logger.info("loading_local_embedding_model", model=fallback_model)
+            _embedding_model = SentenceTransformer(fallback_model)
+            logger.info("local_embedding_model_loaded", model=fallback_model)
 
     return _embedding_model
 
@@ -65,7 +69,8 @@ def embed_texts(texts: list[str], batch_size: int = 64) -> np.ndarray:
     logger.info("embedding_texts", count=len(texts), batch_size=batch_size)
     
     settings = get_settings()
-    if not settings.use_local_embeddings:
+    is_openai = not settings.use_local_embeddings and settings.is_llm_configured
+    if is_openai:
         # OpenAIEmbeddings implementation
         # The langchain implementation uses embed_documents
         embeddings_list = model.embed_documents(texts)
@@ -74,7 +79,7 @@ def embed_texts(texts: list[str], batch_size: int = 64) -> np.ndarray:
         # SentenceTransformer implementation
         embeddings = model.encode(
             texts,
-            batch_size=batch_size,
+            batch_size=8, # REDUCED strictly to 8 to prevent memory spikes on Railway 500MB tier!
             show_progress_bar=False,
             normalize_embeddings=True,
         )
@@ -106,8 +111,9 @@ def embed_query(query: str) -> np.ndarray:
     # Generate embedding
     model = get_embedding_model()
     settings = get_settings()
+    is_openai = not settings.use_local_embeddings and settings.is_llm_configured
     
-    if not settings.use_local_embeddings:
+    if is_openai:
         embedding_list = model.embed_query(query)
         embedding = np.array([embedding_list])
     else:
@@ -128,7 +134,8 @@ def embed_query(query: str) -> np.ndarray:
 def get_embedding_dimension() -> int:
     """Get the dimensionality of the embedding model."""
     settings = get_settings()
-    if not settings.use_local_embeddings:
+    is_openai = not settings.use_local_embeddings and settings.is_llm_configured
+    if is_openai:
         # text-embedding-3-small uses 1536
         # text-embedding-3-large uses 3072
         # text-embedding-ada-002 uses 1536
