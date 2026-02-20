@@ -53,17 +53,17 @@ export default function ComparePage() {
               const isSelected = selected.includes(doc.id);
               return (
                 <button key={doc.id} onClick={() => toggle(doc.id)}
-                  className={`w-full flex items-center gap-4 p-4 transition-all text-left hover:bg-[var(--bg-elevated)]
+                  className={`w-full flex items-center gap-3 sm:gap-4 p-4 transition-all text-left hover:bg-[var(--bg-elevated)] min-w-0
                     ${isSelected ? 'bg-primary-600/10' : ''}`}>
-                  <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all
+                  <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0
                     ${isSelected ? 'bg-primary-600 border-primary-600' : 'border-[var(--border-default)]'}`}>
                     {isSelected && <CheckSquare className="w-3.5 h-3.5 text-white" />}
                   </div>
-                  <div className="w-9 h-9 rounded-xl bg-primary-500/10 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-primary-500/10 flex items-center justify-center shrink-0">
                     <FileText className="w-4 h-4 text-primary-400" />
                   </div>
-                  <span className="text-sm text-[var(--text-primary)] font-medium">{doc.original_filename}</span>
-                  <span className="text-xs text-[var(--text-muted)] ml-auto">{doc.file_type.toUpperCase()}</span>
+                  <span className="text-sm text-[var(--text-primary)] font-medium truncate flex-1">{doc.original_filename}</span>
+                  <span className="text-xs text-[var(--text-muted)] shrink-0 ml-auto">{doc.file_type.toUpperCase()}</span>
                 </button>
               );
             })}

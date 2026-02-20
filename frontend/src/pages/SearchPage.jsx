@@ -71,19 +71,21 @@ export default function SearchPage() {
           {results.results.map((r, i) => (
             <Link key={i} to={`/documents/${r.document_id}`}
               className={`glass-card p-5 hover:border-primary-500/30 transition-all block group animate-slide-up delay-${Math.min(i + 1, 5)}`}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary-500/15 flex items-center justify-center border border-primary-500/10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-3 sm:gap-0">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-primary-500/15 flex items-center justify-center border border-primary-500/10 shrink-0">
                     <FileText className="w-4 h-4 text-primary-400" />
                   </div>
-                  <span className="text-sm font-medium text-[var(--text-primary)] group-hover:text-primary-400 transition-colors">{r.document_name}</span>
+                  <span className="text-sm font-medium text-[var(--text-primary)] group-hover:text-primary-400 transition-colors truncate">{r.document_name}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 h-1.5 bg-[var(--bg-elevated)] rounded-full overflow-hidden">
-                    <div className="h-full bg-primary-500 rounded-full" style={{ width: `${r.score * 100}%` }} />
+                <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-1.5 bg-[var(--bg-elevated)] rounded-full overflow-hidden">
+                      <div className="h-full bg-primary-500 rounded-full" style={{ width: `${r.score * 100}%` }} />
+                    </div>
+                    <span className="text-xs text-primary-400 font-semibold">{(r.score * 100).toFixed(0)}%</span>
                   </div>
-                  <span className="text-xs text-primary-400 font-semibold">{(r.score * 100).toFixed(0)}%</span>
-                  <ArrowUpRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-primary-400 transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-primary-400 transition-colors shrink-0" />
                 </div>
               </div>
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{r.content}</p>

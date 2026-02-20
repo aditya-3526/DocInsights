@@ -167,17 +167,17 @@ export default function DashboardPage() {
           <div className="divide-y divide-[var(--border-subtle)]">
             {stats.recent_documents.map((doc, i) => (
               <Link key={doc.id} to={`/documents/${doc.id}`}
-                className={`flex items-center justify-between p-4 hover:bg-[var(--bg-elevated)] transition-all group animate-slide-up delay-${Math.min(i + 1, 5)}`}>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500/20 to-purple-500/10 flex items-center justify-center border border-primary-500/10">
+                className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-[var(--bg-elevated)] transition-all group animate-slide-up delay-${Math.min(i + 1, 5)} gap-3 sm:gap-0`}>
+                <div className="flex items-start sm:items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500/20 to-purple-500/10 flex items-center justify-center border border-primary-500/10 shrink-0">
                     <FileText className="w-5 h-5 text-primary-400" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-primary)] group-hover:text-primary-400 transition-colors">{doc.original_filename}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)] group-hover:text-primary-400 transition-colors truncate">{doc.original_filename}</p>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">{(doc.file_size / 1024).toFixed(1)} KB • {doc.file_type.toUpperCase()}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-t-0 border-[var(--border-subtle)] pt-3 sm:pt-0 mt-1 sm:mt-0">
                   <StatusBadge status={doc.status} />
                   <ArrowUpRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-primary-400 transition-colors" />
                 </div>

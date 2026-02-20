@@ -84,12 +84,12 @@ export function EmptyState({ icon: Icon, title, description, action }) {
  */
 export function PageHeader({ title, subtitle, actions }) {
   return (
-    <div className="flex items-center justify-between mb-8 animate-fade-in">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold gradient-text">{title}</h1>
-        {subtitle && <p className="text-gray-400 mt-1.5 text-sm">{subtitle}</p>}
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text">{title}</h1>
+        {subtitle && <p className="text-gray-400 mt-1.5 text-xs sm:text-sm">{subtitle}</p>}
       </div>
-      {actions && <div className="flex items-center gap-3">{actions}</div>}
+      {actions && <div className="flex items-center gap-3 w-full sm:w-auto">{actions}</div>}
     </div>
   );
 }

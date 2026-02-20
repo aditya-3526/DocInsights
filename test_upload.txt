@@ -1,0 +1,3 @@
+This is a small test document to verify that the Smart Document Insights backend successfully delegates embedding generation to the OpenAI API instead of loading the massive local model into memory.
+
+When this document is uploaded, it should split into chunks and send those chunks to OpenAI, returning a 1536-dimensional response. The FAISS CPU index will gracefully capture these high-dimensional embeddings and bypass the 500MB Railway free-tier memory crash entirely.

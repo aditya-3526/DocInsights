@@ -68,21 +68,23 @@ export default function DocumentPage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link to="/upload" className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{doc.original_filename}</h1>
-          <div className="flex items-center gap-4 mt-1.5">
-            <span className="text-xs text-[var(--text-muted)]">{(doc.file_size / 1024).toFixed(1)} KB</span>
-            <span className="text-xs text-[var(--text-muted)]">{doc.file_type.toUpperCase()}</span>
-            {doc.word_count > 0 && <span className="text-xs text-[var(--text-muted)]">{doc.word_count.toLocaleString()} words</span>}
-            {doc.page_count > 0 && <span className="text-xs text-[var(--text-muted)]">{doc.page_count} pages</span>}
-            <StatusBadge status={doc.status} size="lg" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+        <div className="flex items-start sm:items-center gap-4 min-w-0 w-full">
+          <Link to="/upload" className="p-2 flex-shrink-0 rounded-lg hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-[var(--text-primary)] truncate">{doc.original_filename}</h1>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1.5">
+              <span className="text-xs text-[var(--text-muted)]">{(doc.file_size / 1024).toFixed(1)} KB</span>
+              <span className="text-xs text-[var(--text-muted)]">{doc.file_type.toUpperCase()}</span>
+              {doc.word_count > 0 && <span className="text-xs text-[var(--text-muted)]">{doc.word_count.toLocaleString()} words</span>}
+              {doc.page_count > 0 && <span className="text-xs text-[var(--text-muted)]">{doc.page_count} pages</span>}
+              <StatusBadge status={doc.status} size="lg" />
+            </div>
           </div>
         </div>
-        <Link to={`/documents/${id}/chat`} className="btn-primary flex items-center gap-2 text-sm">
+        <Link to={`/documents/${id}/chat`} className="btn-primary flex justify-center items-center gap-2 text-sm w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
           <MessageSquare className="w-4 h-4" /> Chat
         </Link>
       </div>

@@ -149,21 +149,21 @@ export default function UploadPage() {
           <div className="divide-y divide-[var(--border-subtle)]">
             {documents.map((doc, i) => (
               <div key={doc.id}
-                className={`flex items-center justify-between p-4 hover:bg-[var(--bg-elevated)] transition-all animate-slide-up delay-${Math.min(i + 1, 5)}`}>
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500/15 to-purple-500/10 flex items-center justify-center text-lg border border-primary-500/10">
+                className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 hover:bg-[var(--bg-elevated)] transition-all animate-slide-up delay-${Math.min(i + 1, 5)} gap-3 sm:gap-0`}>
+                <div className="flex items-start sm:items-center gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary-500/15 to-purple-500/10 flex items-center justify-center text-lg border border-primary-500/10 shrink-0">
                     {FILE_ICONS[doc.file_type] || '📄'}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{doc.original_filename}</p>
-                    <div className="flex items-center gap-3 mt-1">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)] truncate">{doc.original_filename}</p>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
                       <span className="text-xs text-[var(--text-muted)]">{(doc.file_size / 1024).toFixed(1)} KB</span>
                       <span className="text-xs text-[var(--text-muted)]">{doc.file_type.toUpperCase()}</span>
                       {doc.word_count > 0 && <span className="text-xs text-[var(--text-muted)]">{doc.word_count.toLocaleString()} words</span>}
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-t-0 border-[var(--border-subtle)] pt-3 sm:pt-0 mt-1 sm:mt-0">
                   <StatusBadge status={doc.status} />
                   {doc.status === 'ready' && (
                     <div className="flex items-center gap-1 ml-2">

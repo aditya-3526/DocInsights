@@ -81,17 +81,17 @@ export default function ChatPage() {
   return (
     <div className="animate-fade-in flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-4 glass-card-static px-5 py-3">
-        <Link to={`/documents/${id}`} className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
+      <div className="flex items-center gap-3 mb-4 glass-card-static px-4 sm:px-5 py-3">
+        <Link to={`/documents/${id}`} className="p-2 flex-shrink-0 rounded-lg hover:bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1 min-w-0">
-          <h1 className="text-base font-bold text-[var(--text-primary)] truncate">Chat with Document</h1>
-          <p className="text-xs text-[var(--text-muted)] truncate">{doc?.original_filename}</p>
+          <h1 className="text-sm sm:text-base font-bold text-[var(--text-primary)] truncate">Chat</h1>
+          <p className="text-[10px] sm:text-xs text-[var(--text-muted)] truncate">{doc?.original_filename}</p>
         </div>
         <Link to={`/documents/${id}`}
-          className="btn-ghost flex items-center gap-2 text-xs border border-[var(--border-subtle)]">
-          <FileText className="w-3.5 h-3.5" /> View Doc
+          className="btn-ghost flex items-center gap-1.5 sm:gap-2 text-xs border border-[var(--border-subtle)] px-2 sm:px-3">
+          <FileText className="w-3.5 h-3.5" /> <span className="hidden sm:inline">View Doc</span><span className="sm:hidden">Doc</span>
         </Link>
       </div>
 
@@ -106,7 +106,7 @@ export default function ChatPage() {
             <p className="text-sm text-[var(--text-muted)] mb-8 max-w-md">
               I'll search through the document content and provide grounded answers with source citations.
             </p>
-            <div className="grid grid-cols-2 gap-3 max-w-lg w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg w-full">
               {suggestions.map((s) => (
                 <button key={s} onClick={() => { setInput(s); inputRef.current?.focus(); }}
                   className="text-left text-xs p-4 rounded-xl glass-card-static border border-[var(--border-subtle)] hover:border-primary-500/30 hover:bg-primary-600/5 text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-all duration-200 group">
