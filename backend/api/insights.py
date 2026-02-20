@@ -146,8 +146,8 @@ async def get_document_insights(document_id: int, db: AsyncSession = Depends(get
         
         formatted.append({
             "id": insight.id,
-            "type": insight.insight_type.value,
-            "content": content,
+            "insight_type": insight.insight_type.value,
+            "content_json": content,
             "created_at": insight.created_at.isoformat(),
         })
     
