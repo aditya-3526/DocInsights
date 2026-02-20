@@ -54,6 +54,7 @@ async def summarize_document(document_id: int, db: AsyncSession = Depends(get_db
         content_json=json.dumps(summary),
     )
     db.add(insight)
+    await db.commit()
     
     return SummaryResponse(
         document_id=document_id,
@@ -84,6 +85,7 @@ async def extract_document(
         content_json=json.dumps(extraction),
     )
     db.add(insight)
+    await db.commit()
     
     return ExtractionResponse(
         document_id=document_id,
@@ -108,6 +110,7 @@ async def detect_document_risks(document_id: int, db: AsyncSession = Depends(get
         content_json=json.dumps(risk_report),
     )
     db.add(insight)
+    await db.commit()
     
     return RiskResponse(
         document_id=document_id,
