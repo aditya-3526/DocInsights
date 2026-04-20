@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Upload, MessageSquare, Search,
-  GitCompare, FileText, Zap, ChevronLeft, ChevronRight, Sun, Moon, Menu, X
+  GitCompare, FileText, Zap, ChevronLeft, ChevronRight, Sun, Moon, Menu, X,
+  MessagesSquare
 } from 'lucide-react';
 import { ToastProvider } from './components/Toast';
 
@@ -11,6 +12,7 @@ import DocumentPage from './pages/DocumentPage';
 import ChatPage from './pages/ChatPage';
 import DashboardPage from './pages/DashboardPage';
 import ComparePage from './pages/ComparePage';
+import MultiChatPage from './pages/MultiChatPage';
 import SearchPage from './pages/SearchPage';
 
 const navItems = [
@@ -18,6 +20,7 @@ const navItems = [
   { to: '/upload', icon: Upload, label: 'Documents' },
   { to: '/search', icon: Search, label: 'Search' },
   { to: '/compare', icon: GitCompare, label: 'Compare' },
+  { to: '/chat/multi', icon: MessagesSquare, label: 'Multi-Chat' },
 ];
 
 function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen }) {
@@ -157,6 +160,7 @@ export default function App() {
               <Route path="/documents/:id/chat" element={<ChatPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/compare" element={<ComparePage />} />
+              <Route path="/chat/multi" element={<MultiChatPage />} />
             </Routes>
           </div>
         </main>

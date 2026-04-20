@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import {
   FileText, MessageSquare, Sparkles, AlertTriangle, Shield,
   BookOpen, ClipboardList, Loader2, ArrowLeft, ArrowUpRight,
-  CheckCircle, XCircle
+  CheckCircle, XCircle, FileDown
 } from 'lucide-react';
 import {
   getDocument, getDocumentText, getInsights,
-  summarizeDocument, extractDocument, detectRisks
+  summarizeDocument, extractDocument, detectRisks, generateReport
 } from '../services/api';
 import { StatusBadge, PageHeader, Skeleton } from '../components/ui';
 import { useToast } from '../components/Toast';
@@ -16,13 +16,45 @@ const TABS = ['overview', 'text', 'insights'];
 
 export default function DocumentPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const [doc, setDoc] = useState(null);
   const [text, setText] = useState('');
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [actionLoading, setActionLoading] = useState('');
+  const [activeHighlight, setActiveHighlight] = useState(null);
+  const textContainerRef = useRef(null);
+  const highlightRef = useRef(null);
   const toast = useToast();
+
+  // Parse highlight from query params
+  useEffect(() => {
+    const highlightParam = searchParams.get('highlight');
+    const tabParam = searchParams.get('tab');
+    if (highlightParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(highlightParam));
+        if (parsed && typeof parsed.start_char === 'number' && typeof parsed.end_char === 'number') {
+          setActiveHighlight(parsed);
+          setActiveTab('text');
+        }
+      } catch { /* invalid highlight param — ignore silently */ }
+    } else if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  // Scroll to highlight after text renders
+  useEffect(() => {
+    if (activeHighlight && highlightRef.current && text) {
+      // Delay to let DOM render
+      const timer = setTimeout(() => {
+        highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [activeHighlight, text, activeTab]);
 
   useEffect(() => { loadDocument(); }, [id]);
 
@@ -46,13 +78,18 @@ export default function DocumentPage() {
   const handleAction = async (action) => {
     setActionLoading(action);
     try {
-      const fn = { summarize: summarizeDocument, extract: extractDocument, risks: detectRisks }[action];
-      await fn(id);
-      toast.success('Analysis Complete', `${action} generated successfully`);
-      const insightData = await getInsights(id);
-      setInsights(insightData.insights || []);
+      if (action === 'report') {
+        await generateReport(id);
+        toast.success('Report Generated', 'PDF downloaded successfully');
+      } else {
+        const fn = { summarize: summarizeDocument, extract: extractDocument, risks: detectRisks }[action];
+        await fn(id);
+        toast.success('Analysis Complete', `${action} generated successfully`);
+        const insightData = await getInsights(id);
+        setInsights(insightData.insights || []);
+      }
     } catch (err) {
-      toast.error('Analysis Failed', err.response?.data?.detail || 'Something went wrong');
+      toast.error('Action Failed', err.response?.data?.detail || 'Something went wrong');
     } finally {
       setActionLoading('');
     }
@@ -102,7 +139,7 @@ export default function DocumentPage() {
 
       {/* Tab Content */}
       {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 animate-fade-in">
           <ActionCard icon={Sparkles} title="Summarize" desc="Generate an AI-powered executive summary with key highlights"
             action="summarize" loading={actionLoading === 'summarize'} onClick={() => handleAction('summarize')}
             hasData={!!summaryInsight} color="indigo" />
@@ -112,17 +149,33 @@ export default function DocumentPage() {
           <ActionCard icon={ClipboardList} title="Extract Info" desc="Pull out key facts, dates, parties, and structured data"
             action="extract" loading={actionLoading === 'extract'} onClick={() => handleAction('extract')}
             hasData={!!extractionInsight} color="purple" />
+          <ActionCard icon={FileDown} title="Generate Report" desc="Download a comprehensive AI-generated PDF report"
+            action="report" loading={actionLoading === 'report'} onClick={() => handleAction('report')}
+            hasData={false} color="green" />
         </div>
       )}
 
       {activeTab === 'text' && (
         <div className="glass-card p-6 animate-fade-in">
-          <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-4 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-primary-400" /> Extracted Text
-          </h3>
-          <pre className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed max-h-[65vh] overflow-y-auto font-mono text-[13px]">
-            {text || 'No text extracted yet.'}
-          </pre>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-[var(--text-secondary)] flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-primary-400" /> Extracted Text
+            </h3>
+            {activeHighlight && (
+              <button onClick={() => setActiveHighlight(null)}
+                className="text-xs text-amber-400 hover:text-amber-300 transition-colors px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15">
+                ✕ Clear Highlight
+              </button>
+            )}
+          </div>
+          <div ref={textContainerRef}
+            className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap leading-relaxed max-h-[65vh] overflow-y-auto font-mono text-[13px]">
+            {text ? (
+              <HighlightedText text={text} highlight={activeHighlight} highlightRef={highlightRef} />
+            ) : (
+              'No text extracted yet.'
+            )}
+          </div>
         </div>
       )}
 
@@ -147,6 +200,7 @@ function ActionCard({ icon: Icon, title, desc, loading, onClick, hasData, color 
     indigo: { bg: 'from-indigo-500/10 to-purple-500/5', border: 'border-indigo-500/20', icon: 'text-indigo-400', btnBg: 'bg-indigo-600 hover:bg-indigo-500' },
     amber: { bg: 'from-amber-500/10 to-orange-500/5', border: 'border-amber-500/20', icon: 'text-amber-400', btnBg: 'bg-amber-600 hover:bg-amber-500' },
     purple: { bg: 'from-purple-500/10 to-pink-500/5', border: 'border-purple-500/20', icon: 'text-purple-400', btnBg: 'bg-purple-600 hover:bg-purple-500' },
+    green: { bg: 'from-green-500/10 to-emerald-500/5', border: 'border-green-500/20', icon: 'text-green-400', btnBg: 'bg-green-600 hover:bg-green-500' },
   };
   const c = colorMap[color] || colorMap.indigo;
 
@@ -292,6 +346,44 @@ function ExtractionContent({ data }) {
     </div>
   );
 }
+
+/**
+ * Renders document text with an optional highlighted range.
+ * Splits text into before/highlighted/after segments.
+ * Handles edge cases gracefully — falls back to plain text.
+ */
+function HighlightedText({ text, highlight, highlightRef }) {
+  if (!highlight || highlight.start_char == null || highlight.end_char == null) {
+    return <>{text}</>;
+  }
+
+  const { start_char, end_char } = highlight;
+
+  // Validate indices
+  if (start_char < 0 || end_char <= start_char || start_char >= text.length) {
+    return <>{text}</>;
+  }
+
+  const safeEnd = Math.min(end_char, text.length);
+  const before = text.slice(0, start_char);
+  const highlighted = text.slice(start_char, safeEnd);
+  const after = text.slice(safeEnd);
+
+  return (
+    <>
+      {before}
+      <mark
+        ref={highlightRef}
+        className="bg-amber-400/20 text-amber-200 px-0.5 rounded-sm ring-2 ring-amber-400/30 ring-offset-1 ring-offset-transparent"
+        style={{ scrollMarginTop: '120px' }}
+      >
+        {highlighted}
+      </mark>
+      {after}
+    </>
+  );
+}
+
 
 function DocumentSkeleton() {
   return (

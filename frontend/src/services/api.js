@@ -127,4 +127,38 @@ export const getTimeline = async () => {
     return data;
 };
 
+// ============================================
+// Report Generation
+// ============================================
+
+export const generateReport = async (documentId, reportType = 'comprehensive') => {
+    const response = await api.post('/report/generate',
+        { document_id: documentId, report_type: reportType },
+        { responseType: 'blob', timeout: 120000 }
+    );
+    // Trigger browser download
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `DocInsights_Report_${documentId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    return true;
+};
+
+// ============================================
+// Multi-Document Chat
+// ============================================
+
+export const multiDocumentChat = async (documentIds, question, topK = 5) => {
+    const { data } = await api.post('/chat/multi', {
+        document_ids: documentIds,
+        question,
+        top_k: topK,
+    });
+    return data;
+};
+
 export default api;

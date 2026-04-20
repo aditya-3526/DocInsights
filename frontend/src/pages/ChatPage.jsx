@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Loader2, User, Bot, FileText, Sparkles, Copy, Check } from 'lucide-react';
 import { getDocument, chatWithDocument, getChatHistory } from '../services/api';
 import { useToast } from '../components/Toast';
 
 export default function ChatPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [doc, setDoc] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -119,7 +120,7 @@ export default function ChatPage() {
         )}
 
         {messages.map((msg, i) => (
-          <ChatBubble key={i} msg={msg} />
+          <ChatBubble key={i} msg={msg} documentId={id} navigate={navigate} />
         ))}
 
         {loading && (
@@ -166,8 +167,15 @@ export default function ChatPage() {
   );
 }
 
-function ChatBubble({ msg }) {
+function ChatBubble({ msg, documentId, navigate }) {
   const [copied, setCopied] = useState(false);
+
+  const handleHighlightClick = (h) => {
+    try {
+      const data = { start_char: h.start_char, end_char: h.end_char, text: h.text?.slice(0, 300), page_number: h.page_number };
+      navigate(`/documents/${documentId}?tab=text&highlight=${encodeURIComponent(JSON.stringify(data))}`);
+    } catch { /* ignore encoding errors */ }
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(msg.content);
@@ -212,6 +220,34 @@ function ChatBubble({ msg }) {
                   </div>
                   <p className="text-xs text-[var(--text-muted)] line-clamp-2 leading-relaxed">{src.content}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Highlights (evidence-based) */}
+        {msg.highlights?.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-[var(--border-subtle)]">
+            <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-widest font-semibold mb-2">Evidence</p>
+            <div className="space-y-2">
+              {msg.highlights.map((h, j) => (
+                <button key={j} onClick={() => handleHighlightClick(h)}
+                  className="w-full text-left p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/10 hover:bg-amber-500/10 hover:border-amber-500/20 transition-all cursor-pointer group/hl">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-amber-400 font-semibold flex items-center gap-1.5">
+                      Chunk {h.chunk_index + 1}
+                      <span className="text-[9px] text-amber-400/50 group-hover/hl:text-amber-400/80 transition-colors">↗ View in doc</span>
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {h.page_number && <span className="text-[10px] text-[var(--text-muted)]">p.{h.page_number}</span>}
+                      {h.start_char != null && (
+                        <span className="text-[10px] text-[var(--text-muted)]">chars {h.start_char}–{h.end_char}</span>
+                      )}
+                      <span className="text-[10px] text-amber-400">{(h.relevance_score * 100).toFixed(0)}%</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[var(--text-muted)] line-clamp-3 leading-relaxed italic">"{h.text?.slice(0, 200)}{h.text?.length > 200 ? '...' : ''}"</p>
+                </button>
               ))}
             </div>
           </div>
