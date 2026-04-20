@@ -117,10 +117,16 @@ from backend.api.search import router as search_router
 from backend.api.chat import router as chat_router
 from backend.api.compare import router as compare_router
 from backend.api.dashboard import router as dashboard_router
+from backend.api.report import router as report_router
+from backend.api.chat_v2 import router as chat_v2_router
 
 # Register under both /api/ and /api/v1/ for compatibility
 for router in [documents_router, insights_router, search_router, chat_router, compare_router, dashboard_router]:
     app.include_router(router)
+
+# Register new feature routers (v2)
+app.include_router(report_router)
+app.include_router(chat_v2_router)
 
 
 # ============================================
