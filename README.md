@@ -215,22 +215,6 @@ celery -A backend.workers.celery_app worker --loglevel=info
 
 ---
 
-## 🐳 Docker Deployment
-
-```bash
-cp .env.example .env
-# Edit .env with your settings
-docker-compose up --build
-```
-
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
-| Backend | http://localhost:8000 |
-| API Docs | http://localhost:8000/docs |
-
----
-
 ## 🛠 Tech Stack
 
 ### Backend
@@ -365,10 +349,6 @@ DocInsights/
 │   │   └── index.css            # Theme system + animations
 │   └── vercel.json              # Vercel deployment config
 ├── tests/                       # Pytest test suite
-├── docker/                      # Dockerfiles + nginx config
-├── render.yaml                  # Render deployment blueprint
-├── railway.json                 # Railway deployment config
-├── Procfile                     # Start command
 └── requirements.txt             # Python dependencies
 ```
 
@@ -417,14 +397,7 @@ python -m pytest tests/ -v
 
 ## ⚠️ Deployment Note
 
-> This project was previously deployed on **Railway** (backend) and **Vercel** (frontend). Due to hosting platform restrictions, the current version is optimized for **local execution and demonstration**.
->
-> The system is **fully deployable** and includes configuration files for:
-> - **Render** (`render.yaml`)
-> - **Railway** (`railway.json`, `Procfile`)
-> - **Docker** (`docker-compose.yml`)
->
-> To deploy, connect the GitHub repository to any platform, set the required environment variables, and push.
+> This project is designed as a **full-stack AI platform** optimized for **local execution and demonstration**. The architecture is production-ready and can be deployed to any cloud platform (Render, Railway, Fly.io, AWS) by adding the appropriate configuration files and setting environment variables.
 
 ---
 
