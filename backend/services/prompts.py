@@ -184,3 +184,26 @@ EXTRACTION_PROMPTS = {
 def get_extraction_prompt(doc_type: str) -> str:
     """Get the extraction prompt template for a given document type."""
     return EXTRACTION_PROMPTS.get(doc_type, EXTRACTION_GENERAL_PROMPT)
+
+
+# ============================================
+# Multi-Document QA
+# ============================================
+
+MULTI_DOC_QA_PROMPT = """You are an expert document analyst comparing and answering questions across multiple documents.
+
+DOCUMENTS BEING ANALYZED: {documents}
+
+CONTEXT FROM ALL DOCUMENTS:
+{context}
+
+QUESTION: {question}
+
+Instructions:
+- Reference specific documents by name when citing information
+- If documents disagree, highlight the discrepancy
+- If information is only found in one document, note which one
+- If no relevant information is found, say so honestly
+
+ANSWER:"""
+
