@@ -401,17 +401,7 @@ python -m pytest tests/ -v
 
 ---
 
-## 📸 Screenshots
-
-| View | Description |
-|------|-------------|
-| ![Dashboard](docs/dashboard-with-data.png) | **Dashboard** — Animated stats, charts, document pipeline |
-| | **Chat** — RAG conversation with source citations and evidence highlights |
-| | **Highlight Navigation** — Click evidence → auto-scroll to highlighted text |
-| | **Report** — PDF download with executive summary, risks, extractions |
-| | **Multi-Chat** — Cross-document Q&A with grouped sources |
-
----
+ 
 
 ## 📄 License
 
