@@ -9,11 +9,12 @@
 </p>
 
 <p align="center">
-  <a href="https://frontend-ten-gamma-11.vercel.app">🌐 Live Demo</a> •
-  <a href="https://docinsights-production.up.railway.app/docs">📖 API Docs</a> •
-  <a href="#features">✨ Features</a> •
-  <a href="#tech-stack">🛠 Tech Stack</a> •
-  <a href="#quick-start">🚀 Quick Start</a>
+  <a href="#-problem-statement">🎯 Why</a> •
+  <a href="#-features">✨ Features</a> •
+  <a href="#-whats-new-v2">🆕 What's New</a> •
+  <a href="#-demo-walkthrough">🎬 Demo</a> •
+  <a href="#-quick-start">🚀 Quick Start</a> •
+  <a href="#-architecture">🏗 Architecture</a>
 </p>
 
 <p align="center">
@@ -21,126 +22,141 @@
   <img src="https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/>
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
   <img src="https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+  <img src="https://img.shields.io/badge/FAISS-Vector_Search-FF6F00?style=for-the-badge" alt="FAISS"/>
+  <img src="https://img.shields.io/badge/RAG-Pipeline-8B5CF6?style=for-the-badge" alt="RAG"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"/>
 </p>
 
 ---
 
-## 🌐 Live Deployment
+## 🎯 Problem Statement
 
-| Service | URL |
-|---------|-----|
-| **Frontend** (Vercel) | [frontend-ten-gamma-11.vercel.app](https://frontend-ten-gamma-11.vercel.app) |
-| **Backend API** (Railway) | [docinsights-production.up.railway.app](https://docinsights-production.up.railway.app) |
-| **API Documentation** | [Swagger UI](https://docinsights-production.up.railway.app/docs) |
-| **Health Check** | [/api/health](https://docinsights-production.up.railway.app/api/health) |
+Professionals routinely deal with **hundreds of documents** — contracts, research papers, reports, compliance filings — yet extracting actionable insights from them remains painfully manual.
+
+**DocInsights** solves this by providing an **AI-powered document intelligence platform** that can:
+
+- **Understand** any document through semantic analysis
+- **Answer questions** with source-cited, explainable responses (RAG)
+- **Detect risks** automatically with severity scoring
+- **Compare** multiple documents side-by-side with AI-generated analysis
+- **Generate reports** as downloadable PDFs with executive summaries
+
+> **Think of it as ChatGPT for your documents — but with full transparency into *where* every answer comes from.**
 
 ---
 
 ## ✨ Features
 
 ### 📄 Document Management
-- **Multi-format upload** — PDF, DOCX, TXT with drag-and-drop support
-- **OCR support** — Extract text from scanned documents using Tesseract
-- **Real-time processing** — Automatic chunking, embedding, and indexing on upload
-- **Status tracking** — Live pipeline status (uploading → chunking → embedding → ready)
+- **Multi-format upload** — PDF, DOCX, TXT with drag-and-drop
+- **Real-time processing pipeline** — uploading → chunking → embedding → ready
+- **Smart text extraction** with OCR fallback (Tesseract)
 
 ### 🔍 Semantic Search
-- **AI-powered similarity search** across all uploaded documents
-- **FAISS vector store** with auto-upgrade from flat index to IVF at scale
-- **Relevance scoring** with visual score bars for each result
-- **Document-scoped search** — search within a specific document or across all
+- **AI-powered similarity search** across all documents using FAISS
+- **Auto-scaling index** — flat index → IVF at 256+ vectors
+- **Relevance scoring** with visual confidence bars
 
 ### 💬 Chat with Documents (RAG)
-- **Retrieval-Augmented Generation** — ask questions, get answers with source citations
-- **Context-aware conversations** — maintains chat history per document
-- **Source transparency** — see exactly which chunks informed each answer with relevance scores
-- **Copy-to-clipboard** — one-click copy for any AI response
+- **Retrieval-Augmented Generation** — grounded answers with source citations
+- **Context-aware conversations** — full chat history per document
+- **Source transparency** — see exactly which chunks informed each answer
 
 ### 📊 AI-Powered Insights
-- **Executive Summaries** — auto-generated document summaries with key takeaways
-- **Risk Detection** — automated risk scoring with severity levels (High / Medium / Low)
-- **Key Information Extraction** — legal, financial, and research-specific data extraction
-- **Tabbed Insights View** — overview, full text, and AI insights in a clean interface
+- **Executive summaries** with key takeaways
+- **Risk detection** — automated severity scoring (High / Medium / Low)
+- **Key information extraction** — dates, parties, clauses, financials
 
 ### ⚖️ Multi-Document Comparison
-- **Side-by-side analysis** — compare up to 5 documents simultaneously
-- **AI-generated differences** — similarities and differences highlighted automatically
-- **Comparison summary** — high-level overview of what the documents share and where they diverge
+- **Side-by-side analysis** of up to 5 documents
+- **AI-generated diff** — similarities and differences highlighted automatically
 
 ### 📈 Analytics Dashboard
 - **Animated stat cards** — document count, risk totals, severity breakdown
-- **Interactive charts** — donut chart for document types, bar chart for risk distribution
-- **Pipeline progress bars** — visual status of all documents in the system
-- **Recent documents feed** — quick access to latest uploads with status badges
+- **Interactive charts** — document types donut, risk distribution bars
+- **Pipeline status** for all documents in the system
 
 ---
 
-## 🛠 Tech Stack
+## 🆕 What's New (v2)
 
-### Backend
-| Component | Technology |
-|-----------|-----------|
-| **Framework** | FastAPI with async SQLAlchemy |
-| **LLM** | OpenRouter (OpenAI-compatible API) |
-| **Embeddings** | SentenceTransformers (`all-MiniLM-L6-v2`) |
-| **Vector Store** | FAISS (auto-upgrades flat → IVF at 256+ vectors) |
-| **Database** | SQLite (dev) / PostgreSQL (prod) |
-| **Workers** | Celery + Redis |
-| **Caching** | In-memory LRU (LLM responses + query embeddings) |
+Three major features added in the latest release, all production-safe and backward-compatible:
 
-### Frontend
-| Component | Technology |
-|-----------|-----------|
-| **Framework** | React 18 + Vite |
-| **Styling** | Tailwind CSS with custom CSS variables |
-| **Charts** | Recharts |
-| **Icons** | Lucide React |
-| **HTTP Client** | Axios |
-| **Routing** | React Router v6 |
+### 🔦 Explainable AI — Evidence Highlighting
 
-### Infrastructure
-| Component | Technology |
-|-----------|-----------|
-| **Frontend Hosting** | Vercel (with API rewrites) |
-| **Backend Hosting** | Railway (Nixpacks) |
-| **CI/CD** | Git push → auto-deploy |
+Every AI answer now includes **clickable evidence highlights** showing exactly which text was used to generate the response.
+
+- **Rich metadata**: exact text, page number, character offsets, relevance score
+- **Click-to-navigate**: clicking a highlight opens the document and **scrolls to the exact text**
+- **Visual highlighting**: the source text is wrapped in an amber `<mark>` for instant identification
+- **"Clear Highlight"** button to dismiss
+
+> **User flow**: Ask question → See evidence → Click highlight → Document opens → Auto-scrolls → Text is highlighted
+
+<!-- Screenshots: chat highlight + document highlight -->
+
+### 📄 AI Report Generator
+
+Generate **comprehensive PDF reports** for any document with a single click.
+
+- **Smart caching**: reuses existing insights from the database — no redundant LLM calls
+- **90-second timeout budget** with per-step guards
+- **Graceful degradation**: if any section fails, the report still generates with available data
+- **Sections**: Executive Summary, Key Highlights, Risk Analysis, Extracted Information
+- **Download**: streams as PDF directly to the browser
+
+### 📊 Multi-Document Chat
+
+Chat **across multiple documents simultaneously** with cross-document source attribution.
+
+- **Select 2–5 documents** and ask questions that span all of them
+- **Bounded retrieval**: `min(top_k × 3, 50)` cap prevents performance degradation
+- **Per-document chunk limits** (max 3/doc) + deduplication + re-ranking
+- **Token-aware context**: 6,000-token budget with round-robin document balancing
+- **Grouped sources**: responses show sources organized by document
+
+### 🛡️ Production Safety (Cross-Cutting)
+
+- **`safe_llm_call()`** — all LLM calls wrapped with configurable timeout (15–20s) + fallback response
+- **Feature flags** — each feature independently toggleable via environment variables
+- **Bounded FAISS over-fetch** — hard cap of 50 vectors per search
+- **Comprehensive observability** — `structlog` events with latency tracking for embed/retrieve/LLM
 
 ---
 
-## 🏗 Architecture
+## 🎬 Demo Walkthrough
+
+Follow these steps to see all features in action:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        VERCEL (Frontend)                        │
-│  React 18 + Vite + Tailwind CSS                                 │
-│  /api/* → rewrites to Railway backend                           │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │ HTTPS
-┌──────────────────────────▼──────────────────────────────────────┐
-│                       RAILWAY (Backend)                         │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  FastAPI Application                                     │   │
-│  │  ├── api/          → REST endpoints (documents, chat,    │   │
-│  │  │                  search, compare, insights, dashboard)│   │
-│  │  ├── services/     → Business logic                      │   │
-│  │  │   ├── llm_client.py      → LLM with retry + cache     │   │
-│  │  │   ├── rag_service.py     → RAG pipeline orchestration │   │
-│  │  │   ├── vector_store.py    → FAISS index management     │   │
-│  │  │   ├── embedding_service.py → Query embedding + cache  │   │
-│  │  │   └── document_processor.py → Text extraction         │   │
-│  │  ├── models/       → SQLAlchemy ORM + Pydantic schemas   │   │
-│  │  └── utils/        → Text processing, file validation    │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│                           │                                     │
-│  ┌────────────────┐  ┌────▼───────────┐  ┌──────────────────┐   │
-│  │   SQLite DB    │  │ FAISS Index    │  │ LLM (OpenRouter) │   │
-│  │  (documents,   │  │ (embeddings,   │  │ (GPT-3.5-turbo)  │   │
-│  │   chunks,      │  │  similarity    │  │                  │   │
-│  │   insights,    │  │  search)       │  │                  │   │
-│  │   chat history)│  │                │  │                  │   │
-│  └────────────────┘  └────────────────┘  └──────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+Step 1: Upload a Document
+    → Go to Documents tab → Drag & drop any PDF/DOCX/TXT
+    → Watch the real-time processing pipeline
+
+Step 2: Generate AI Insights
+    → Open the document → Click "Summarize", "Risk Analysis", or "Extract Info"
+    → View results in the Insights tab
+
+Step 3: Chat with Your Document
+    → Click "Chat" → Ask any question about the document
+    → See source-cited answers with relevance scores
+
+Step 4: Click on Evidence Highlights
+    → In the chat, scroll to the "Evidence" section
+    → Click any highlight → Document opens → Scrolls to exact text
+
+Step 5: Generate a PDF Report
+    → On the document page → Click "Generate Report"
+    → PDF downloads automatically with summary, risks, and extracted data
+
+Step 6: Multi-Document Chat
+    → Go to "Multi-Chat" in the sidebar
+    → Select 2–5 documents → Ask a cross-document question
+    → See sources grouped by document
+
+Step 7: Search & Compare
+    → Use Semantic Search to find relevant content across all docs
+    → Use Compare to analyze multiple documents side-by-side
 ```
 
 ---
@@ -171,7 +187,7 @@ OPENAI_MODEL=openai/gpt-3.5-turbo
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn backend.main:app --reload --port 8000
 ```
@@ -195,6 +211,8 @@ App running at: [http://localhost:5173](http://localhost:5173)
 celery -A backend.workers.celery_app worker --loglevel=info
 ```
 
+> **Note**: If Redis isn't running, document processing happens inline automatically — no setup needed.
+
 ---
 
 ## 🐳 Docker Deployment
@@ -213,6 +231,149 @@ docker-compose up --build
 
 ---
 
+## 🛠 Tech Stack
+
+### Backend
+| Component | Technology |
+|-----------|-----------|
+| **Framework** | FastAPI with async SQLAlchemy |
+| **LLM** | OpenRouter / OpenAI (GPT-3.5-turbo) |
+| **LLM Safety** | `safe_llm_call()` — timeout + fallback wrapper |
+| **Embeddings** | SentenceTransformers (`all-MiniLM-L6-v2`) |
+| **Vector Store** | FAISS (auto-upgrades flat → IVF at 256+ vectors) |
+| **Database** | SQLite (dev) / PostgreSQL (prod) |
+| **PDF Generation** | fpdf2 |
+| **Workers** | Celery + Redis (optional — falls back to inline) |
+| **Caching** | In-memory LRU (LLM responses + query embeddings) |
+| **Logging** | structlog (structured JSON events) |
+
+### Frontend
+| Component | Technology |
+|-----------|-----------|
+| **Framework** | React 18 + Vite |
+| **Styling** | Tailwind CSS with custom design system |
+| **Charts** | Recharts |
+| **Icons** | Lucide React |
+| **HTTP Client** | Axios |
+| **Routing** | React Router v6 |
+
+---
+
+## 🏗 Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Frontend (React)                         │
+│  React 18 + Vite + Tailwind CSS                                  │
+│  Pages: Dashboard, Documents, Chat, Multi-Chat, Search, Compare  │
+│  /api/* → reverse proxy to backend                               │
+└──────────────────────────┬───────────────────────────────────────┘
+                           │ HTTPS / localhost
+┌──────────────────────────▼───────────────────────────────────────┐
+│                        Backend (FastAPI)                          │
+│  ┌────────────────────────────────────────────────────────────┐   │
+│  │  API Layer                                                 │   │
+│  │  ├── documents.py    → Upload, list, delete, get           │   │
+│  │  ├── chat.py         → RAG chat (single doc + highlights)  │   │
+│  │  ├── chat_v2.py      → Multi-doc chat (2–5 documents)      │   │
+│  │  ├── report.py       → PDF report generation               │   │
+│  │  ├── search.py       → Semantic search                     │   │
+│  │  ├── compare.py      → Multi-doc comparison                │   │
+│  │  ├── insights.py     → Summarize, extract, risk detection  │   │
+│  │  └── dashboard.py    → Analytics & stats                   │   │
+│  ├────────────────────────────────────────────────────────────┤   │
+│  │  Service Layer                                             │   │
+│  │  ├── llm_client.py        → LLM + safe_llm_call() wrapper │   │
+│  │  ├── rag_service.py       → RAG pipeline + highlights      │   │
+│  │  ├── rag_service_v2.py    → Multi-doc RAG (isolated)       │   │
+│  │  ├── report_service.py    → PDF generation + caching       │   │
+│  │  ├── vector_store.py      → FAISS (bounded over-fetch)     │   │
+│  │  ├── embedding_service.py → Query embedding + cache        │   │
+│  │  └── document_processor.py → Text extraction               │   │
+│  ├────────────────────────────────────────────────────────────┤   │
+│  │  Data Layer                                                │   │
+│  │  ├── SQLite/PostgreSQL (docs, chunks, insights, chat)      │   │
+│  │  ├── FAISS Index (vector embeddings for search)            │   │
+│  │  └── LLM (OpenRouter / OpenAI API)                         │   │
+│  └────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### RAG Pipeline (Single Document)
+```
+Question → Embed Query → FAISS Search → Retrieve Top-K Chunks
+    → Build Context → safe_llm_call(prompt, timeout=15s)
+    → Parse Answer → Build Highlights → Return {answer, sources, highlights}
+```
+
+### Multi-Document RAG Pipeline
+```
+Question → Embed Query → FAISS Global Search (bounded: min(k×3, 50))
+    → Filter by doc_ids → Deduplicate → Per-doc cap (3/doc)
+    → Re-rank by score → Token-aware round-robin context (6000 tokens)
+    → safe_llm_call(prompt, timeout=20s)
+    → Return {answer, sources, highlights, document_groups}
+```
+
+---
+
+## 📁 Project Structure
+
+```
+DocInsights/
+├── backend/
+│   ├── api/                     # REST API endpoints
+│   │   ├── documents.py         # Upload, list, delete, get document
+│   │   ├── chat.py              # RAG chat with highlights
+│   │   ├── chat_v2.py           # Multi-document chat (NEW)
+│   │   ├── report.py            # PDF report generation (NEW)
+│   │   ├── search.py            # Semantic search
+│   │   ├── compare.py           # Multi-document comparison
+│   │   ├── insights.py          # Summarize, extract, risk detection
+│   │   └── dashboard.py         # Analytics & stats
+│   ├── services/                # Business logic layer
+│   │   ├── llm_client.py        # LLM wrapper + safe_llm_call()
+│   │   ├── rag_service.py       # RAG pipeline + highlight extraction
+│   │   ├── rag_service_v2.py    # Multi-doc RAG pipeline (NEW)
+│   │   ├── report_service.py    # PDF generation service (NEW)
+│   │   ├── vector_store.py      # FAISS index (bounded over-fetch)
+│   │   ├── embedding_service.py # Embeddings with query cache
+│   │   ├── document_processor.py # PDF/DOCX/TXT text extraction
+│   │   ├── prompts.py           # Centralized prompt templates
+│   │   └── response_parser.py   # JSON parsing + validators
+│   ├── models/                  # SQLAlchemy models + Pydantic schemas
+│   ├── utils/                   # Text processing, file validation
+│   ├── workers/                 # Celery background tasks (optional)
+│   ├── config.py                # App config + feature flags
+│   ├── database.py              # Async database engine & sessions
+│   └── main.py                  # FastAPI app entry point
+├── frontend/
+│   ├── src/
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── ui.jsx           # AnimatedCounter, StatusBadge, Skeleton
+│   │   │   └── Toast.jsx        # Toast notification system
+│   │   ├── pages/               # Page components
+│   │   │   ├── DashboardPage.jsx    # Analytics dashboard
+│   │   │   ├── UploadPage.jsx       # Document upload & list
+│   │   │   ├── DocumentPage.jsx     # Doc viewer + highlight scroll
+│   │   │   ├── ChatPage.jsx         # Single-doc RAG chat + evidence
+│   │   │   ├── MultiChatPage.jsx    # Multi-doc chat (NEW)
+│   │   │   ├── SearchPage.jsx       # Semantic search
+│   │   │   └── ComparePage.jsx      # Document comparison
+│   │   ├── services/api.js      # Axios API client
+│   │   ├── App.jsx              # Layout + routing
+│   │   └── index.css            # Theme system + animations
+│   └── vercel.json              # Vercel deployment config
+├── tests/                       # Pytest test suite
+├── docker/                      # Dockerfiles + nginx config
+├── render.yaml                  # Render deployment blueprint
+├── railway.json                 # Railway deployment config
+├── Procfile                     # Start command
+└── requirements.txt             # Python dependencies
+```
+
+---
+
 ## ⚙️ Environment Variables
 
 | Variable | Description | Default |
@@ -224,59 +385,10 @@ docker-compose up --build
 | `EMBEDDING_MODEL` | SentenceTransformer model | `all-MiniLM-L6-v2` |
 | `MAX_FILE_SIZE_MB` | Max upload file size | `50` |
 | `REDIS_URL` | Redis URL for Celery | `redis://localhost:6379/0` |
-| `CORS_ORIGINS` | Allowed CORS origins | `http://localhost:5173` |
-
----
-
-## 📁 Project Structure
-
-```
-DocInsights/
-├── backend/
-│   ├── api/                  # REST API endpoints
-│   │   ├── documents.py      # Upload, list, delete, get document
-│   │   ├── chat.py           # RAG chat with documents
-│   │   ├── search.py         # Semantic search
-│   │   ├── compare.py        # Multi-document comparison
-│   │   ├── insights.py       # Summarize, extract, risk detection
-│   │   └── dashboard.py      # Analytics & stats
-│   ├── services/             # Business logic layer
-│   │   ├── llm_client.py     # LLM wrapper with retry + cache
-│   │   ├── rag_service.py    # RAG pipeline orchestration
-│   │   ├── vector_store.py   # FAISS index (flat → IVF auto-upgrade)
-│   │   ├── embedding_service.py  # Embeddings with query cache
-│   │   ├── document_processor.py # PDF/DOCX/TXT text extraction
-│   │   ├── prompts.py        # Centralized prompt templates
-│   │   └── response_parser.py    # JSON parsing + validators
-│   ├── models/               # SQLAlchemy models + Pydantic schemas
-│   ├── utils/                # Text processing, file validation
-│   ├── workers/              # Celery background tasks
-│   ├── config.py             # App configuration
-│   ├── database.py           # Database engine & sessions
-│   └── main.py               # FastAPI app entry point
-├── frontend/
-│   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   │   ├── ui.jsx        # AnimatedCounter, StatusBadge, Skeleton
-│   │   │   └── Toast.jsx     # Toast notification system
-│   │   ├── pages/            # Page components
-│   │   │   ├── DashboardPage.jsx
-│   │   │   ├── UploadPage.jsx
-│   │   │   ├── DocumentPage.jsx
-│   │   │   ├── ChatPage.jsx
-│   │   │   ├── SearchPage.jsx
-│   │   │   └── ComparePage.jsx
-│   │   ├── services/api.js   # Axios API client
-│   │   ├── App.jsx           # Layout + routing
-│   │   └── index.css         # Theme system + animations
-│   ├── vercel.json           # Vercel deployment config
-│   └── vite.config.js        # Vite config with dev proxy
-├── tests/                    # Pytest test suite
-├── docker/                   # Dockerfiles + nginx config
-├── Procfile                  # Railway start command
-├── railway.json              # Railway deployment config
-└── requirements.txt          # Python dependencies
-```
+| `CORS_ORIGINS` | Allowed CORS origins | `*` |
+| `ENABLE_MULTI_DOC_CHAT` | Toggle multi-doc chat | `true` |
+| `ENABLE_REPORT_GENERATION` | Toggle report generation | `true` |
+| `ENABLE_HIGHLIGHTS` | Toggle evidence highlights | `true` |
 
 ---
 
@@ -289,28 +401,42 @@ python -m pytest tests/ -v
 
 ---
 
-## 🚢 Deployment Guide
+## 🧠 Key Design Decisions
 
-### Vercel (Frontend)
-```bash
-cd frontend
-npm i -g vercel
-vercel --yes --prod
-```
+| Decision | Rationale |
+|----------|-----------|
+| **`safe_llm_call()` wrapper** | Prevents API hangs — every LLM call has a hard timeout (15–20s) and returns a graceful fallback on failure |
+| **Isolated v2 services** | `rag_service_v2.py` and `report_service.py` are completely independent — zero risk to existing RAG pipeline |
+| **Feature flags** | Each new feature can be disabled via env vars without code changes or redeployment |
+| **Bounded FAISS over-fetch** | Hard cap of 50 prevents O(n) scans on large indices |
+| **Token-aware context** | Round-robin document balancing with 6,000-token budget prevents context overflow |
+| **Insight caching** | Report generator reuses existing insights from DB — avoids redundant LLM calls |
+| **Optional Celery** | Falls back to inline processing when Redis isn't available — works out of the box |
 
-### Railway (Backend)
-```bash
-npm i -g @railway/cli
-railway login
-railway init
-railway up
-railway domain  # Generate public URL
-```
+---
 
-Set environment variables:
-```bash
-railway variables set OPENAI_API_KEY=your-key OPENAI_API_BASE=https://openrouter.ai/api/v1
-```
+## ⚠️ Deployment Note
+
+> This project was previously deployed on **Railway** (backend) and **Vercel** (frontend). Due to hosting platform restrictions, the current version is optimized for **local execution and demonstration**.
+>
+> The system is **fully deployable** and includes configuration files for:
+> - **Render** (`render.yaml`)
+> - **Railway** (`railway.json`, `Procfile`)
+> - **Docker** (`docker-compose.yml`)
+>
+> To deploy, connect the GitHub repository to any platform, set the required environment variables, and push.
+
+---
+
+## 📸 Screenshots
+
+| View | Description |
+|------|-------------|
+| ![Dashboard](docs/dashboard-with-data.png) | **Dashboard** — Animated stats, charts, document pipeline |
+| | **Chat** — RAG conversation with source citations and evidence highlights |
+| | **Highlight Navigation** — Click evidence → auto-scroll to highlighted text |
+| | **Report** — PDF download with executive summary, risks, extractions |
+| | **Multi-Chat** — Cross-document Q&A with grouped sources |
 
 ---
 
