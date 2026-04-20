@@ -52,6 +52,8 @@ async def chat_with_document(
             "chunk_index": c.chunk_index,
             "content": c.content,
             "start_page": c.start_page,
+            "start_char": c.start_char,
+            "end_char": c.end_char,
         }
         for c in chunks
     ]
@@ -81,6 +83,7 @@ async def chat_with_document(
         answer=rag_result["answer"],
         sources=rag_result["sources"],
         document_id=document_id,
+        highlights=rag_result.get("highlights", []),
     )
 
 

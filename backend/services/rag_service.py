@@ -5,7 +5,7 @@ Thin orchestrator that composes llm_client, prompts, and response_parser.
 Pipeline: embed query → retrieve chunks → inject context → LLM response.
 """
 
-from backend.services.llm_client import get_llm_response, get_llm_streaming
+from backend.services.llm_client import get_llm_response, get_llm_streaming, safe_llm_call
 from backend.services.prompts import (
     QA_PROMPT,
     SUMMARY_PROMPT,
@@ -92,11 +92,35 @@ def ask_question(
 
     # Step 4: Call LLM
     prompt = QA_PROMPT.format(context=context, question=question)
-    answer = get_llm_response(prompt, use_cache=False)  # Don't cache QA responses
+    answer = safe_llm_call(
+        prompt,
+        timeout=15,
+        use_cache=False,
+        fallback="I was unable to generate an answer at the moment. Please try again.",
+    )
+
+    # Step 5: Build highlights safely
+    highlights = []
+    try:
+        for result in search_results:
+            chunk = chunk_lookup.get(result["chunk_id"])
+            if chunk:
+                highlights.append({
+                    "document_id": document_id,
+                    "page_number": chunk.get("start_page"),
+                    "chunk_index": result["chunk_index"],
+                    "text": chunk["content"],
+                    "start_char": chunk.get("start_char"),
+                    "end_char": chunk.get("end_char"),
+                    "relevance_score": result["score"],
+                })
+    except Exception as e:
+        logger.warning("highlight_extraction_failed", error=str(e))
+        highlights = []
 
     logger.info("rag_answer_generated", document_id=document_id, sources=len(sources))
 
-    return {"answer": answer, "sources": sources}
+    return {"answer": answer, "sources": sources, "highlights": highlights}
 
 
 # ============================================

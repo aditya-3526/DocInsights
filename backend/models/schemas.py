@@ -124,11 +124,23 @@ class ChatSource(BaseModel):
     relevance_score: float
 
 
+class HighlightItem(BaseModel):
+    """Evidence highlight with precise text location for frontend rendering."""
+    document_id: int
+    page_number: int | None = None
+    chunk_index: int
+    text: str
+    start_char: int | None = None
+    end_char: int | None = None
+    relevance_score: float = 0.0
+
+
 class ChatResponse(BaseModel):
     """Response from document chat."""
     answer: str
     sources: list[ChatSource]
     document_id: int
+    highlights: list[HighlightItem] = []  # NEW — defaults to [] for backward compat
 
 
 class ChatHistoryResponse(BaseModel):
@@ -226,3 +238,51 @@ class TimelineEvent(BaseModel):
     document_id: int
     document_name: str
     event_type: str
+
+
+# ============================================
+# Multi-Document Chat Schemas
+# ============================================
+
+class MultiChatRequest(BaseModel):
+    """Request to chat across multiple documents."""
+    document_ids: list[int] = Field(..., min_length=2, max_length=5, description="IDs of documents to chat across")
+    question: str = Field(..., min_length=1, max_length=2000, description="Question to ask")
+    top_k: int = Field(default=5, ge=1, le=20, description="Number of chunks to retrieve per document")
+
+
+class MultiChatSource(BaseModel):
+    """A source from multi-document chat with document attribution."""
+    chunk_id: int
+    document_id: int
+    document_name: str
+    chunk_index: int
+    content: str
+    relevance_score: float
+
+
+class DocumentGroup(BaseModel):
+    """Sources grouped by document."""
+    document_id: int
+    document_name: str
+    sources: list[MultiChatSource]
+
+
+class MultiChatResponse(BaseModel):
+    """Response from multi-document chat."""
+    answer: str
+    sources: list[MultiChatSource]
+    highlights: list[HighlightItem] = []
+    document_groups: list[DocumentGroup] = []
+    document_ids: list[int]
+
+
+# ============================================
+# Report Schemas
+# ============================================
+
+class ReportRequest(BaseModel):
+    """Request to generate a PDF report."""
+    document_id: int
+    report_type: str = Field(default="comprehensive", description="Report type: comprehensive, summary, risk")
+
