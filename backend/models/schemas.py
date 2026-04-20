@@ -1,3 +1,4 @@
+from typing import Optional, Union, List, Dict, Any
 """
 Pydantic schemas for API request/response validation.
 """
@@ -55,10 +56,10 @@ class DocumentResponse(BaseModel):
     file_type: str
     file_size: int
     status: DocumentStatusEnum
-    page_count: int | None = None
-    word_count: int | None = None
-    language: str | None = None
-    error_message: str | None = None
+    page_count: Optional[int] = None
+    word_count: Optional[int] = None
+    language: Optional[str] = None
+    error_message: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 
@@ -76,7 +77,7 @@ class DocumentStatusResponse(BaseModel):
     """Simple status response for a document."""
     id: int
     status: DocumentStatusEnum
-    error_message: str | None = None
+    error_message: Optional[str] = None
 
 
 # ============================================
@@ -87,7 +88,7 @@ class SearchRequest(BaseModel):
     """Request to perform semantic search."""
     query: str = Field(..., min_length=1, max_length=1000, description="Search query text")
     top_k: int = Field(default=5, ge=1, le=20, description="Number of results to return")
-    document_id: int | None = Field(default=None, description="Restrict search to a specific document")
+    document_id: Optional[int] = Field(default=None, description="Restrict search to a specific document")
 
 
 class SearchResult(BaseModel):
@@ -97,7 +98,7 @@ class SearchResult(BaseModel):
     document_name: str
     content: str
     score: float
-    page: int | None = None
+    page: Optional[int] = None
 
 
 class SearchResponse(BaseModel):
@@ -120,18 +121,18 @@ class ChatSource(BaseModel):
     """A cited source from the document."""
     chunk_index: int
     content: str
-    page: int | None = None
+    page: Optional[int] = None
     relevance_score: float
 
 
 class HighlightItem(BaseModel):
     """Evidence highlight with precise text location for frontend rendering."""
     document_id: int
-    page_number: int | None = None
+    page_number: Optional[int] = None
     chunk_index: int
     text: str
-    start_char: int | None = None
-    end_char: int | None = None
+    start_char: Optional[int] = None
+    end_char: Optional[int] = None
     relevance_score: float = 0.0
 
 
@@ -180,7 +181,7 @@ class RiskItem(BaseModel):
     severity: RiskLevel
     description: str
     highlighted_text: str
-    recommendation: str | None = None
+    recommendation: Optional[str] = None
 
 
 class RiskResponse(BaseModel):

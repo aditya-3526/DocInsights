@@ -7,7 +7,7 @@ import hashlib
 import time
 from collections import OrderedDict
 from threading import Lock
-from typing import Generator
+from typing import Optional, Union, Generator
 
 from backend.config import get_settings
 from backend.utils.logging_config import get_logger
@@ -33,7 +33,7 @@ class LLMCache:
     def _make_key(self, prompt: str) -> str:
         return hashlib.md5(prompt.encode()).hexdigest()
 
-    def get(self, prompt: str) -> str | None:
+    def get(self, prompt: str) -> Optional[str]:
         key = self._make_key(prompt)
         with self._lock:
             if key in self._cache:

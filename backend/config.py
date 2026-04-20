@@ -1,3 +1,4 @@
+from typing import Optional, Union, List, Dict, Any
 """
 Application configuration using Pydantic Settings.
 Reads from .env file and environment variables.
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     # --- OpenAI / LLM ---
     openai_api_key: str = ""
     openai_model: str = "gpt-3.5-turbo"
-    openai_api_base: str | None = None
+    openai_api_base: Optional[str] = None
     llm_max_retries: int = 2
     llm_timeout: int = 60
 

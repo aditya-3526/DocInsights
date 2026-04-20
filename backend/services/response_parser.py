@@ -5,14 +5,14 @@ Handles markdown fences, trailing commas, partial JSON, and other common LLM qui
 
 import json
 import re
-from typing import Any
+from typing import Optional, Union, Any
 
 from backend.utils.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 
-def parse_json_response(response: str, default: dict | None = None) -> dict:
+def parse_json_response(response: str, default: Optional[dict] = None) -> dict:
     """
     Parse a JSON response from an LLM, handling common formatting issues:
     - Markdown code fences (```json ... ```)
@@ -104,7 +104,7 @@ def validate_comparison_response(data: dict) -> dict:
 # Internal helpers
 # ============================================
 
-def _try_parse(text: str) -> dict | list | None:
+def _try_parse(text: str) -> Optional[Union[dict, list]]:
     """Attempt JSON parse, return None on failure."""
     try:
         return json.loads(text)

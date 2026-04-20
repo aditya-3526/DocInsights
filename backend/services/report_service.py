@@ -178,10 +178,10 @@ def _build_pdf(doc, summary, risks, extraction) -> bytes:
         _add_section(pdf, "Executive Summary", summary.get("executive_summary", ""))
         highlights = summary.get("bullet_highlights", [])
         if highlights:
-            _add_section(pdf, "Key Highlights", "\n".join(f"  \u2022 {h}" for h in highlights))
+            _add_section(pdf, "Key Highlights", "\n".join(f"  - {h}" for h in highlights))
         takeaways = summary.get("key_takeaways", [])
         if takeaways:
-            _add_section(pdf, "Key Takeaways", "\n".join(f"  \u2022 {t}" for t in takeaways))
+            _add_section(pdf, "Key Takeaways", "\n".join(f"  - {t}" for t in takeaways))
 
     # --- Risk Analysis ---
     if risks:
@@ -201,7 +201,7 @@ def _build_pdf(doc, summary, risks, extraction) -> bytes:
             if isinstance(value, list):
                 ext_lines.append(f"{key.replace('_', ' ').title()}:")
                 for v in value:
-                    ext_lines.append(f"  \u2022 {v if isinstance(v, str) else json.dumps(v)}")
+                    ext_lines.append(f"  - {v if isinstance(v, str) else json.dumps(v)}")
             elif isinstance(value, dict):
                 ext_lines.append(f"{key.replace('_', ' ').title()}:")
                 for k2, v2 in value.items():
@@ -240,6 +240,15 @@ def _add_section(pdf, title, content):
     pdf.cell(0, 10, title, new_x="LMARGIN", new_y="NEXT")
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Helvetica", "", 10)
-    # fpdf2 handles UTF-8 and wrapping via multi_cell
-    pdf.multi_cell(0, 6, content or "No data available.")
+    
+    # Sanitize content for Helvetica (which uses latin-1 in fpdf2 by default)
+    content = content or "No data available."
+    content = content.replace("\u2022", "-").replace("•", "-")
+    content = content.replace("“", '"').replace("”", '"').replace("‘", "'").replace("’", "'")
+    content = content.replace("–", "-").replace("—", "-")
+    # Encode/decode to wipe out any other unrenderable unicode characters
+    content = content.encode("latin-1", "replace").decode("latin-1")
+    
+    # fpdf2 handles wrapping via multi_cell
+    pdf.multi_cell(0, 6, content)
     pdf.ln(6)
