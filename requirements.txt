@@ -44,6 +44,9 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 slowapi==0.1.9
 
+# --- PDF Generation ---
+fpdf2==2.8.1
+
 # --- Utilities ---
 pydantic==2.9.2
 pydantic-settings==2.5.2

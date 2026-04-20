@@ -219,3 +219,64 @@ def _mock_llm_response(prompt: str) -> str:
         return '{"main_topics": ["Document processed"], "key_points": ["Set OPENAI_API_KEY for extraction"], "action_items": [], "references": []}'
 
     return "This is a placeholder response. Configure OPENAI_API_KEY for real AI-powered analysis."
+
+
+# ============================================
+# Timeout-Safe LLM Wrapper
+# ============================================
+
+import concurrent.futures
+
+# Default timeout for LLM calls (seconds)
+LLM_CALL_TIMEOUT = 15
+
+
+def safe_llm_call(
+    prompt: str,
+    *,
+    timeout: int = LLM_CALL_TIMEOUT,
+    fallback: str = "Unable to generate a response at the moment. Please try again.",
+    use_cache: bool = True,
+    temperature: float = 0.1,
+    max_tokens: int = 2000,
+) -> str:
+    """
+    Timeout-safe wrapper around get_llm_response().
+
+    Uses a thread pool to enforce a hard timeout. If the LLM call
+    exceeds `timeout` seconds OR raises any exception, returns `fallback`.
+    Never crashes. Never hangs.
+
+    Args:
+        prompt: The prompt to send.
+        timeout: Max seconds to wait for LLM response.
+        fallback: Response returned on timeout or error.
+        use_cache, temperature, max_tokens: Passed through to get_llm_response().
+
+    Returns:
+        LLM response string, or fallback on failure.
+    """
+    # Fast path: check cache before spawning thread
+    if use_cache:
+        cached = _cache.get(prompt)
+        if cached is not None:
+            logger.debug("safe_llm_cache_hit")
+            return cached
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(
+                get_llm_response,
+                prompt,
+                use_cache=use_cache,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            result = future.result(timeout=timeout)
+            return result
+    except concurrent.futures.TimeoutError:
+        logger.error("llm_call_timeout", timeout=timeout, prompt_preview=prompt[:80])
+        return fallback
+    except Exception as e:
+        logger.error("llm_call_safe_failed", error=str(e), prompt_preview=prompt[:80])
+        return fallback

@@ -184,6 +184,7 @@ def search(
             query_embedding = query_embedding.astype(np.float32)
 
         search_k = top_k * 5 if document_id else top_k
+        search_k = min(search_k, 50)  # Bounded over-fetch: never exceed 50
         search_k = min(search_k, index.ntotal)
 
         scores, indices = index.search(query_embedding, search_k)

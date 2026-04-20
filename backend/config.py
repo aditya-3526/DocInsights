@@ -53,6 +53,11 @@ class Settings(BaseSettings):
     # --- CORS ---
     cors_origins: str = "*"
 
+    # --- Feature Flags ---
+    enable_multi_doc_chat: bool = True
+    enable_report_generation: bool = True
+    enable_highlights: bool = True
+
     # --- API ---
     api_version: str = "v1"
 
