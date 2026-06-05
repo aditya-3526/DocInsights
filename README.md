@@ -1,14 +1,3 @@
----
-title: DocInsights
-emoji: ⚡
-colorFrom: indigo
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
-
 # ⚡ DocInsights — AI Document Intelligence (RAG) Platform
 
 Upload documents, ask questions, and get **source-cited** answers. DocInsights is a
@@ -17,14 +6,14 @@ shows exactly which chunks of which document it came from, with relevance scores
 
 This Space runs the **entire app in one container**: a FastAPI backend that serves both
 the JSON API and the built React UI, with a local embedding model and an on-disk FAISS
-index. **No API key is required to try it** — see *Bring your own key* below.
+index. **No API key is required to try it** — see _Bring your own key_ below.
 
 ### 🔗 Live demo
 
-**👉 [Try it here](https://huggingface.co/spaces/REPLACE-WITH-YOUR-SPACE-URL)**
+**👉 [Try it here](https://huggingface.co/spaces/aditya3526/docinsights)**
 
 > Live demo note: this is the free **CPU Basic** tier with an **ephemeral filesystem**.
-> See *Honest framing* at the bottom before judging it as production infrastructure.
+> See _Honest framing_ at the bottom before judging it as production infrastructure.
 
 <!--
 Screenshot intentionally omitted: the images in docs/ are stale (older 4-item sidebar
@@ -112,16 +101,16 @@ docker run -p 7860:7860 docinsights
 All config is via environment variables (see `backend/config.py`). Sensible defaults make
 the app boot with none set. Notable ones:
 
-| Variable | Default | Notes |
-|---|---|---|
-| `SECRET_KEY` | insecure sentinel | **Set this in production** (HF Space → Settings → Secrets). |
-| `USE_LOCAL_EMBEDDINGS` | `true` | Keep `true` for the keyless/CPU demo. |
-| `USE_CELERY` | `false` | Inline processing; set `true` only with a real worker + Redis. |
-| `OPENAI_API_KEY` | empty | Optional server-side key. Per-request BYO-key overrides it. |
-| `OPENAI_MODEL` | `gpt-3.5-turbo` | Any OpenAI-compatible chat model. |
-| `OPENAI_API_BASE` | unset | For OpenRouter / self-hosted OpenAI-compatible endpoints. |
-| `CORS_ORIGINS` | `*` | Same-origin in this single-container setup; tighten if you split origins. |
-| `PORT` | `7860` | The container listens here; matches the Space `app_port`. |
+| Variable               | Default           | Notes                                                                     |
+| ---------------------- | ----------------- | ------------------------------------------------------------------------- |
+| `SECRET_KEY`           | insecure sentinel | **Set this in production** (HF Space → Settings → Secrets).               |
+| `USE_LOCAL_EMBEDDINGS` | `true`            | Keep `true` for the keyless/CPU demo.                                     |
+| `USE_CELERY`           | `false`           | Inline processing; set `true` only with a real worker + Redis.            |
+| `OPENAI_API_KEY`       | empty             | Optional server-side key. Per-request BYO-key overrides it.               |
+| `OPENAI_MODEL`         | `gpt-3.5-turbo`   | Any OpenAI-compatible chat model.                                         |
+| `OPENAI_API_BASE`      | unset             | For OpenRouter / self-hosted OpenAI-compatible endpoints.                 |
+| `CORS_ORIGINS`         | `*`               | Same-origin in this single-container setup; tighten if you split origins. |
+| `PORT`                 | `7860`            | The container listens here; matches the Space `app_port`.                 |
 
 ---
 
