@@ -12,6 +12,7 @@ from backend.database import get_db
 from backend.models.document import Document, DocumentStatus
 from backend.models.insight import DocumentInsight, InsightType
 from backend.models.schemas import CompareRequest, CompareResponse
+from backend.services.llm_client import LLMError
 from backend.services.rag_service import compare_documents
 from backend.utils.logging_config import get_logger
 
@@ -48,9 +49,12 @@ async def compare_docs(request: CompareRequest, db: AsyncSession = Depends(get_d
     ]
     
     logger.info("compare_request", doc_ids=request.document_ids)
-    
+
     # Compare
-    comparison = compare_documents(doc_data)
+    try:
+        comparison = compare_documents(doc_data)
+    except LLMError as e:
+        raise HTTPException(status_code=502, detail=str(e))
     
     # Save insight for each document
     for doc in docs:

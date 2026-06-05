@@ -125,6 +125,15 @@ export default function ApiKeySettings({ collapsed, mobileOpen }) {
               </div>
             </div>
 
+            <div className="mb-5 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                <strong>Using OpenRouter?</strong> Set Base URL to the full{' '}
+                <code className="text-amber-200">https://openrouter.ai/api/v1</code> and namespace the
+                model, e.g. <code className="text-amber-200">openai/gpt-3.5-turbo</code> (not just{' '}
+                <code className="text-amber-200">gpt-3.5-turbo</code>). Plain OpenAI keys need no base URL.
+              </p>
+            </div>
+
             <div className="flex items-center gap-3">
               <button
                 onClick={save}

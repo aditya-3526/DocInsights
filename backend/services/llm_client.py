@@ -16,6 +16,38 @@ from backend.utils.logging_config import get_logger
 logger = get_logger(__name__)
 
 
+class LLMError(RuntimeError):
+    """
+    Raised when an LLM call fails *while a key is configured*.
+
+    This is deliberately distinct from the keyless demo path: with no key we
+    return a mock placeholder, but a configured-and-failing call (bad key,
+    wrong model, unreachable base URL) must surface a real error instead of
+    silently looking identical to demo mode.
+    """
+
+
+def _explain_llm_error(llm_config, error: Exception) -> str:
+    """Build a user-facing error message, with provider-specific hints."""
+    msg = str(error).strip() or error.__class__.__name__
+    base = (llm_config.base_url or "").lower()
+    model = llm_config.model or ""
+    hints = []
+
+    if "openrouter" in base and "/" not in model:
+        hints.append(
+            f"OpenRouter model names are namespaced — try 'openai/{model}' "
+            f"instead of '{model}'."
+        )
+    if llm_config.base_url and not base.startswith(("http://", "https://")):
+        hints.append(
+            "The base URL should be a full URL, e.g. 'https://openrouter.ai/api/v1'."
+        )
+
+    hint_text = (" " + " ".join(hints)) if hints else ""
+    return f"LLM call failed ({model}): {msg}.{hint_text}"
+
+
 # ============================================
 # Response Cache (LRU, thread-safe)
 # ============================================
@@ -128,8 +160,11 @@ def get_llm_response(
                 logger.error("llm_call_failed", error=str(e), attempts=max_retries + 1)
 
     if response is None:
+        # A key IS configured but the call still failed — surface a real error
+        # rather than silently returning the mock placeholder (which is
+        # indistinguishable from "no key configured").
         logger.error("llm_all_retries_exhausted", error=str(last_error))
-        return _mock_llm_response(prompt)
+        raise LLMError(_explain_llm_error(llm_config, last_error))
 
     # Cache successful response
     if use_cache:
@@ -190,8 +225,10 @@ def get_llm_streaming(prompt: str, **kwargs) -> Generator[str, None, None]:
             if chunk.content:
                 yield chunk.content
     except Exception as e:
+        # Key is configured but streaming failed — surface the real error
+        # instead of silently emitting the mock placeholder.
         logger.error("llm_stream_failed", error=str(e))
-        yield _mock_llm_response(prompt)
+        yield f"⚠️ {_explain_llm_error(llm_config, e)}"
 
 
 def get_cache_stats() -> dict:
@@ -285,6 +322,12 @@ def safe_llm_call(
     except concurrent.futures.TimeoutError:
         logger.error("llm_call_timeout", timeout=timeout, prompt_preview=prompt[:80])
         return fallback
+    except LLMError as e:
+        # A key is configured but the call failed — surface the real reason
+        # (bad key / wrong model / bad base URL) instead of the generic
+        # fallback, which is indistinguishable from the keyless demo.
+        logger.error("llm_call_configured_failed", error=str(e), prompt_preview=prompt[:80])
+        return f"⚠️ {e}"
     except Exception as e:
         logger.error("llm_call_safe_failed", error=str(e), prompt_preview=prompt[:80])
         return fallback
